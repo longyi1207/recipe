@@ -1,0 +1,181 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand" style="color:white;">Recipe</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+  <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarColor02">
+     <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+           <a class="nav-link" (click)="onOpenModal(null, 'add')">Add Recipe <span class="sr-only">(current)</span></a>
+        </li>
+     </ul>
+     <form class="form-inline my-2 my-lg-0">
+        <input type="search" (ngModelChange)="searchRecipes(key.value)" #key="ngModel" ngModel
+         name="key" id="searchName" class="form-control mr-sm-2" placeholder="Search recipes..." required>
+     </form>
+  </div>
+</nav>
+<div class="container" id="main-container">
+<div class="row">
+  <div *ngFor="let recipe of recipes" class="col-6" >
+     <div class="card m-b-30 shadow-lg" style="height: 350px; margin-top:50px" (click)="onOpenModal(recipe,'view')">
+         <h3 class="card-title align-self-center" style="margin-top:10px">{{recipe?.name}}</h3> 
+         <div class="card-body row">
+           <div class="col-7"><img src="/server/images/{{recipe?.image}}" alt="not available" class="img-fluid"></div>
+           <div class="col-5">
+            <h6 class="m-0 align-self-center">Time</h6>
+            <p class="m-0 align-self-center">{{recipe?.time}} minutes</p>
+            <br>
+            <h6 class="m-0 align-self-center">Ingredients</h6>
+            <p class="m-0 align-self-center" style="height: 100px;">{{recipe.ingredients}}</p>
+            <span class="align-self-start">
+               <button (click)="onOpenModal(recipe, 'edit')" style="margin-right:10px;border-radius:8px;font-size:18px" class="bi-pencil"></button>
+               <button (click)="onOpenModal(recipe, 'delete')" style="margin-right:10px;border-radius:8px;font-size:18px" class="bi-x"></button>
+            </span>
+            <p class="align-self-start text-muted" style="margin-top:10px"> Author: {{recipe.author}}</p>
+           </div>  
+        </div>
+     </div>
+  </div>
+</div>
+
+<!-- Add Recipe Modal -->
+<div class="modal fade" id="addRecipeModal" tabindex="-1" role="dialog" aria-labelledby="addRecipeModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+       <div class="modal-header">
+          <h5 class="modal-title" id="addRecipeModalLabel">Add Recipe</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+          </button>
+       </div>
+       <div class="modal-body">
+          <form #addForm="ngForm" (ngSubmit)="onAddRecipe(addForm)" enctype="multipart/form-data">
+            <span class="row form-group">
+               <span class="col-6" >
+                  <label for="name">Name (Requried)</label>
+                  <input type="text" ngModel name="name" class="form-control" id="name" placeholder="Name" required style="width:200px">
+               </span>
+               <span class="col-3">
+                  <label for="time">Time</label>
+                  <input type="number" ngModel name="time" class="form-control" id="time" placeholder="Time" style="width:100px">
+               </span>
+              <span class="col-3">
+               <label for="author" >Author</label>
+                 <input type="text" ngModel name="author" class="form-control" id="author" placeholder="Author" style="width:100px">
+               </span>
+              </span>
+          <div class="form-group">
+            <label for="ingredients">Ingredients (Requried)</label>
+            <textarea type="text" ngModel name="ingredients" class="form-control" id="ingredients" placeholder="Ingredients (seperated by comma, for example:apple,sugar,flour)" style="height:100px" required></textarea>
+         </div> 
+          <div class="form-group">
+             <label for="steps">Steps (Requried)</label>
+             <textarea type="text" ngModel name="steps" class="form-control" id="steps" placeholder="Steps (seperated by comma, for example:cut apple,fry apple,add sugar)" style="height:100px" required ></textarea>
+          </div>
+         <div class="form-group">
+            <label for="image">Image</label>
+            <p><input id="image" ngModel (change)="imageSelected($event)" type="file" name="image" accept="image/png, image/jpeg"></p>
+         </div>
+
+         <div class="modal-footer">
+             <button type="button" id="add-recipe-form" class="btn btn-secondary" data-dismiss="modal">Close</button>
+             <button [disabled]="addForm.invalid" type="submit" class="btn btn-primary" >Add</button>
+          </div>
+          </form>
+       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="updateRecipeModal" tabindex="-1" role="dialog" aria-labelledby="recipeditModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+     <div class="modal-content">
+        <div class="modal-header">
+           <h5 class="modal-title" id="updateRecipeModalLabel">Edit Recipe {{editRecipe?.name}}</h5>
+           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+           <span aria-hidden="true">&times;</span>
+           </button>
+        </div>
+        <div class="modal-body">
+              <form #editForm="ngForm" (ngSubmit)="onUpdateRecipe(editForm)">
+               <input type="text" ngModel="{{editRecipe?.id}}" name="id" type="hidden" id="id" value="{{editRecipe?.id}}">
+               <span class="row form-group">
+                  <span class="col-6" >
+                     <label for="name">Name (Requried)</label>
+                     <input type="text" ngModel="{{editRecipe?.name}}" name="name" class="form-control" id="name" placeholder="Name" required style="width:200px">
+                  </span>
+                  <span class="col-3">
+                     <label for="time">Time</label>
+                     <input type="number" ngModel="{{editRecipe?.time}}" name="time" class="form-control" id="time" placeholder="Time" style="width:100px">
+                  </span>
+                 <span class="col-3">
+                  <label for="author" >Author</label>
+                    <input type="text" ngModel="{{editRecipe?.author}}" name="author" class="form-control" id="author" placeholder="Author" style="width:100px">
+                  </span>
+                 </span>
+             <div class="form-group">
+               <label for="ingredients">Ingredients (Requried)</label>
+               <textarea type="text" ngModel="{{editRecipe?.ingredients}}" name="ingredients" class="form-control" id="ingredients" placeholder="Ingredients (seperated by comma, for example:apple,sugar,flour)" style="height:100px" required></textarea>
+            </div> 
+             <div class="form-group">
+                <label for="steps">Steps (Requried)</label>
+                <textarea type="text" ngModel="{{editRecipe?.steps}}" name="steps" class="form-control" id="steps" placeholder="Steps (seperated by comma, for example:cut apple,fry apple,add sugar)" style="height:100px" required ></textarea>
+             </div>
+            <span class="form-group">
+               <label >Image</label>
+               <p><input id="image" ngModel (change)="imageSelected($event)" type="file" name="image" accept="image/png, image/jpeg"></p>
+            </span>
+            <div class="modal-footer">
+                <button type="button" id="add-recipe-form" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button [disabled]="editForm.invalid" type="submit" class="btn btn-primary"> Save </button>
+             </div>
+           </form>
+        </div>
+     </div>
+  </div>
+</div>
+
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteRecipeModal" tabindex="-1" role="dialog" aria-labelledby="deleteModelLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+     <div class="modal-content">
+        <div class="modal-header">
+           <h5 class="modal-title" id="deleteModelLabel">Delete recipe</h5>
+           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+           <span aria-hidden="true">&times;</span>
+           </button>
+        </div>
+        <div class="modal-body">
+           <p>Are you sure you want to delete recipe {{deleteRecipe?.name}}?</p>
+           <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+              <button (click)="onDeleteRecipe(deleteRecipe?.id)" class="btn btn-danger" data-dismiss="modal">Yes</button>
+           </div>
+        </div>
+     </div>
+  </div>
+</div>
+
+
+<!-- View Modal -->
+<div class="modal fade" id="viewRecipeModal" tabindex="-1" role="dialog" aria-labelledby="viewModelLabel" aria-hidden="true">
+   <div class="modal-dialog" role="document">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h3 class="modal-title" id="viewModelLabel">{{recipe?.name}}</h3>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+         </div>
+         <div class="modal-body" style="min-height: 600px;">
+                  <div *ngFor="let step of steps" >
+                     <li style="font-size: 20px;">{{step}}</li>
+                     <br>
+                  </div>
+         </div>
+      </div>
+   </div>
+ </div>

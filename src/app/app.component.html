@@ -21,7 +21,7 @@
      <div class="card m-b-30 shadow-lg" style="height: 350px; margin-top:50px" (click)="onOpenModal(recipe,'view')">
          <h3 class="card-title align-self-center" style="margin-top:10px">{{recipe?.name}}</h3> 
          <div class="card-body row">
-           <div class="col-7"><img src="/server/images/{{recipe?.image}}" alt="not available" class="img-fluid"></div>
+           <div class="col-7"><img src="/server/images/{{recipe?.image}}" alt="not available" class="img-fluid" style="margin-bottom: 0px;"></div>
            <div class="col-5">
             <h6 class="m-0 align-self-center">Time</h6>
             <p class="m-0 align-self-center">{{recipe?.time}} minutes</p>

@@ -40,7 +40,6 @@ export class AppComponent implements OnInit {
       recipe['image'] = recipe['image'].split("\\").pop()
       this.AddImage()
     }
-    console.log(recipe)
     this.recipeService.addRecipe(recipe).subscribe(
       (response: Recipe) => {
         this.getRecipes();

@@ -46,7 +46,6 @@ public class recipeController {
     @PostMapping("/addImg")
     public ResponseEntity<Recipe> addRecipe(@RequestParam("image") MultipartFile img) throws IOException {
         String imgName = StringUtils.cleanPath(img.getOriginalFilename());
-        System.out.println(imgName);
         String uploadDir = "images/";
         FileUploadUtil.saveFile(uploadDir, imgName, img);
         return new ResponseEntity<>(HttpStatus.CREATED);

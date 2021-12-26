@@ -10,3 +10,6 @@ if run successfully, you will see something like "** Angular Live Development Se
 
 SCREENSHOT:
 ![alt text](https://github.com/longyi1207/recipe/blob/main/screenshot.jpg?raw=true)
+
+VIDEO:
+https://www.youtube.com/watch?v=aXpBMm0U_D8
